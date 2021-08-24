@@ -1,0 +1,35 @@
+﻿@page
+@model TodoApp.Pages.TodoListsModel
+
+@{
+    ViewData["Title"] = "TodoLists";
+}
+
+<h1>TodoLists</h1>
+
+<p>
+    <a asp-page="CreateTodoList">Create a new list</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var list in Model.TodoLists) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => list.Title)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@list.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@list.Id">Details</a> |
+                <a asp-page="./DeleteTodoList" asp-route-id="@list.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
