@@ -1,30 +1,29 @@
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Core.Repositories;
+using Core.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using RazorPagesApp.Pages;
 
 namespace TodoApp.Pages
 {
-    public class DeleteTodoListModel : PageModel
+    public class DeleteTodoListModel : PageModelBase
     {
-        private readonly ITodoListRepository _repo;
+        private readonly ITodoService _service;
 
-        public DeleteTodoListModel(ITodoListRepository repo)
+        public DeleteTodoListModel(ITodoService service)
         {
-            _repo = repo;
+            _service = service;
         }
 
-        public async Task OnGet([FromQuery] string id)
+        public async Task<IActionResult> OnGet([FromQuery] int id)
         {
-            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                // Todo: handle error
-                return;
-            }
+            var userId = GetUserId();
+            if (userId == null) { return RedirectToPage("./Identity/Account/Login"); }
 
-            await _repo.Delete(userId.Value, id);
+            await _service.DeleteList(userId, id);
+
+            return Page();
+
+            // TODO: show status and back to list link
         }
     }
 }

@@ -3,19 +3,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Core.Models;
-using Core.Repositories;
+using Core.Services;
 using System.Security.Claims;
 
 namespace TodoApp.Pages
 {
     public class TodoListsModel : PageModel
     {
-        private readonly ITodoListRepository _repo;
+        private readonly ITodoService _service;
         public IEnumerable<TodoList> TodoLists;
 
-        public TodoListsModel(ITodoListRepository repo)
+        public TodoListsModel(ITodoService service)
         {
-            _repo = repo;
+            _service = service;
         }
 
         public IList<TodoList> TodoList { get;set; }
@@ -28,7 +28,7 @@ namespace TodoApp.Pages
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
-            TodoLists = await _repo.GetAll(userId.Value);
+            TodoLists = await _service.GetAllLists(userId.Value);
 
             return Page();
         }

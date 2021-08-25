@@ -1,5 +1,4 @@
-﻿using Core.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
@@ -10,7 +9,7 @@ namespace Infrastructure.Data
 
         }
 
-        public DbSet<TodoList> TodoLists { get; set; }
+        internal DbSet<TodoListEntity> TodoLists { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
           => options.UseSqlServer("Server=.\\SQLEXPRESS;Database=todos;Trusted_Connection=True;MultipleActiveResultSets=true");

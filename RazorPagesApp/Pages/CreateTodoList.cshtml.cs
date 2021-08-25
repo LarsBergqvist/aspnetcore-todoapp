@@ -1,19 +1,18 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Core.Repositories;
-using System.Security.Claims;
+using Core.Services;
 using RazorPagesApp.Models;
+using RazorPagesApp.Pages;
 
 namespace TodoApp.Pages
 {
-    public class CreateTodoListModel : PageModel
+    public class CreateTodoListModel : PageModelBase
     {
-        private readonly ITodoListRepository _repo;
+        private readonly ITodoService _service;
 
-        public CreateTodoListModel(ITodoListRepository repo)
+        public CreateTodoListModel(ITodoService service)
         {
-            _repo = repo;
+            _service = service;
         }
 
         public IActionResult OnGet()
@@ -26,19 +25,12 @@ namespace TodoApp.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            if (!ModelState.IsValid) { return Page();  }
 
+            var userId = GetUserId();
+            if (userId == null) { return RedirectToPage("./Identity/Account/Login");  }
 
-            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return RedirectToPage("./Identity/Account/Login");
-            }
-
-            await _repo.Create(userId.Value, TodoListModel.Title);
+            await _service.CreateList(userId, TodoListModel.Title);
 
             return RedirectToPage("./TodoLists");
         }

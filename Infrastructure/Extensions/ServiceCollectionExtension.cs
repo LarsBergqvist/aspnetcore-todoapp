@@ -1,14 +1,9 @@
-﻿using Core.Repositories;
-using Infrastructure.Data;
-using Infrastructure.Repositories;
+﻿using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Core.Services;
+using Infrastructure.Services;
 
 namespace Infrastructure.Extensions
 {
@@ -17,9 +12,11 @@ namespace Infrastructure.Extensions
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             services.AddDbContext<TodoDbContext>(options =>
-                 options.UseSqlServer(
-                     configuration.GetConnectionString("TodosConnection")));
-            services.AddTransient<ITodoListRepository, TodoListRepository>();
+            {
+                options.UseSqlServer(
+                    configuration.GetConnectionString("TodosConnection"));
+            });
+            services.AddTransient<ITodoService, TodoService>();
             return services;
         }
     }

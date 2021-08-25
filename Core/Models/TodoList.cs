@@ -5,7 +5,7 @@ namespace Core.Models
 {
     public class TodoItem
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Text { get; set; }
     }
 
@@ -16,15 +16,9 @@ namespace Core.Models
             Items = new List<TodoItem>();
         }
 
-        [Required]
-        public string Id { get; set; }
-
-        [Required]
+        public int Id { get; set; }
         public string UserId { get; set; }
-
-        [Required]
         public string Title { get; set; }
-
         public IList<TodoItem> Items { get; set; }
     }
 }
