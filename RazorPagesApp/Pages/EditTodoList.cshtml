@@ -5,9 +5,10 @@
 
 <h4>TodoList</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
+<form method="post">
+
+    <div class="row">
+        <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <input type="hidden" asp-for="TodoList.Id" readonly class="form-control" />
@@ -20,13 +21,79 @@
                 <input asp-for="TodoList.Title" class="form-control" />
                 <span asp-validation-for="TodoList.Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Update" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-page="TodoLists">Back to Lists</a>
-</div>
+    <h5>Todo items</h5>
+    <div class="form-group">
+        <table class="table table-striped" id="todoitems">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.TodoList.Items.Count; i++)
+                {
+                    string style = Model.TodoList.Items[i].Removed ? "display: none" : "";
+                    <tr style="@style">
+                        <td>
+                            <input type="hidden" class="removed" asp-for="TodoList.Items[i].Removed" />
+                            <input type="hidden" asp-for="TodoList.Items[i].Id" />
+                            <input class="titleinput" type="text" asp-for="TodoList.Items[i].Text" />
+                            <span asp-validation-for="TodoList.Items[i].Text" class=" text-danger"></span>
+                        </td>
+                        <td>
+                            <a href="#" class="remove">Remove</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" class="btn btn-success" id="addItem">Add item</button>
+            </div>
+        </div>
+    </div>
+
+    <h5></h5>
+
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+
+    <div>
+        <a asp-page="TodoLists">Back to Lists</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Hacky way for handling dynamic adding of items
+        var todoitems = $('#todoitems tbody');
+        $("#addItem").click(function () {
+            var rowNo = todoitems.find('tr').length;
+            var template =
+                '<tr>' +
+                '<td>' +
+                '<input class="titleinput" name="TodoList.Items[' + rowNo + '].Text" id="TodoList_Items_' + rowNo + '_Text" />' +
+                '<input class="removed" type="hidden" name="TodoList.Items[' + rowNo + '].Removed" id="TodoList_Items_' + rowNo + '_Removed" value="false"/>' +
+                '</td>' +
+                '<td><a href="#" class="remove">Remove</a></td>'
+            '</tr>';
+            todoitems.append(template);
+        });
+
+        todoitems.on('click', '.remove', function (e) {
+            var $row = $(this).closest('tr');
+            var idx = $row.index();
+            console.log('index: ' + idx);
+            var $input = $row.find('.removed').first();
+            $input.val(true);
+            $row.hide();
+        });
+    </script>
+}

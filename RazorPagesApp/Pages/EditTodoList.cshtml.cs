@@ -20,7 +20,7 @@ namespace RazorPagesApp.Pages
             var userId = GetUserId();
             if (userId == null) { return RedirectToPage("./Identity/Account/Login"); }
 
-            TodoList = await _service.GetListForUpdate(userId, id);
+            TodoList = await _service.GetListDetails(userId, id);
             return Page();
         }
 

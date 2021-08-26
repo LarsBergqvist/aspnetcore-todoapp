@@ -6,7 +6,7 @@ namespace Core.Services
 {
     public interface ITodoService
     {
-        Task<TodoList> GetListForUpdate(string userId, int id);
+        Task<TodoList> GetListDetails(string userId, int id);
 
         Task<TodoList> CreateList(string userId, string title);
 

@@ -18,12 +18,25 @@ namespace Infrastructure.Services
             _context = context;
         }
 
-        public async Task<TodoList> GetListForUpdate(string userId, int id)
+        public async Task<TodoList> GetListDetails(string userId, int id)
         {
-            var matched = await _context.TodoLists.Where(l => l.TodoListEntityId == id && l.UserId == userId).ToListAsync();
+            var matched = await _context.TodoLists
+                .Where(l => l.TodoListEntityId == id && l.UserId == userId)
+                .Select(l => new TodoList
+                {
+                    Title = l.Title,
+                    Id = l.TodoListEntityId,
+                    UserId = l.UserId,
+                    Items = l.Items.Select(item => new TodoItem
+                    {
+                        Id = item.TodoItemEntityId,
+                        Text = item.Text
+                    }).ToList()
+                })
+                .ToListAsync();
             if (matched.Count != 1) { throw new Exception("Unable to find todo list for user"); }
 
-            return matched[0].ToModel();
+            return matched[0];
         }
 
         public async Task<TodoList> CreateList(string userId, string title)
@@ -56,18 +69,23 @@ namespace Infrastructure.Services
             var matched = await _context.TodoLists.Where(l => l.TodoListEntityId == id && l.UserId == userId).ToListAsync();
             if (matched.Count != 1) { throw new Exception("Unable to find todo list for user"); }
 
+            foreach(var item in matched[0].Items)
+            {
+                _context.Remove(item);
+            }
             _context.Remove(matched[0]);
             await _context.SaveChangesAsync();
         }
 
         public async Task Update(TodoList list)
         {
-            var matched = await _context.TodoLists.Where(l => l.TodoListEntityId == list.Id && l.UserId == list.UserId).ToListAsync();
+            var matched = await _context.TodoLists.Where(l => l.TodoListEntityId == list.Id && l.UserId == list.UserId)
+                .Include("Items")
+                .ToListAsync();
             if (matched.Count != 1) { throw new Exception("Unable to find todo list for user"); }
 
             var entity = matched[0];
-
-            entity.Title = list.Title;
+            entity.UpdateEntityFromModel(list);
 
             await _context.SaveChangesAsync();
         }

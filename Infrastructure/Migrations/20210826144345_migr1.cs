@@ -7,52 +7,52 @@ namespace Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "TodoLists",
+                name: "TodoList",
                 columns: table => new
                 {
-                    TodoListEntityId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TodoLists", x => x.TodoListEntityId);
+                    table.PrimaryKey("PK_TodoList", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TodoItemEntity",
+                name: "TodoItem",
                 columns: table => new
                 {
-                    TodoItemEntityId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TodoListEntityId = table.Column<int>(type: "int", nullable: true)
+                    TodoListId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TodoItemEntity", x => x.TodoItemEntityId);
+                    table.PrimaryKey("PK_TodoItem", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TodoItemEntity_TodoLists_TodoListEntityId",
-                        column: x => x.TodoListEntityId,
-                        principalTable: "TodoLists",
-                        principalColumn: "TodoListEntityId",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_TodoItem_TodoList_TodoListId",
+                        column: x => x.TodoListId,
+                        principalTable: "TodoList",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TodoItemEntity_TodoListEntityId",
-                table: "TodoItemEntity",
-                column: "TodoListEntityId");
+                name: "IX_TodoItem_TodoListId",
+                table: "TodoItem",
+                column: "TodoListId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "TodoItemEntity");
+                name: "TodoItem");
 
             migrationBuilder.DropTable(
-                name: "TodoLists");
+                name: "TodoList");
         }
     }
 }

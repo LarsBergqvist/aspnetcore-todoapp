@@ -7,6 +7,7 @@ namespace Core.Models
     {
         public int Id { get; set; }
         public string Text { get; set; }
+        public bool Removed { get; set; }
     }
 
     public class TodoList
@@ -18,6 +19,7 @@ namespace Core.Models
 
         public int Id { get; set; }
         public string UserId { get; set; }
+        [Required]
         public string Title { get; set; }
         public IList<TodoItem> Items { get; set; }
     }
