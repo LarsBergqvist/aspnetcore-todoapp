@@ -1,32 +1,48 @@
 ﻿using Infrastructure.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Console.Tests
 {
     class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            SetCurrentDirectory();
-            CreateHostBuilder(args).Build().Run();
-        }
+            try
+            {
+                string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureServices((hostContext, services) =>
+                if (string.IsNullOrWhiteSpace(env))
                 {
-                    services
-                    .AddHostedService<Worker>()
-                    .AddInfrastructureServices(hostContext.Configuration)
-                    ;
-                });
+                    env = "Development";
+                }
 
-        private static void SetCurrentDirectory()
-        {
-            var assemblyLocation = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            System.IO.Directory.SetCurrentDirectory(assemblyLocation);
+                var builder = new ConfigurationBuilder()
+                                .SetBasePath(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location))
+                                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                                .AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true)
+                                .AddEnvironmentVariables();
+
+                IConfigurationRoot configuration = builder.Build();
+
+                var services = new ServiceCollection();
+                services
+                    .AddLogging(builder => builder.AddConsole())
+                    .AddInfrastructureServices(configuration)
+                    .AddTransient<Tests>();
+
+                var provider = services.BuildServiceProvider();
+                var tests = provider.GetService<Tests>();
+                await tests.Run();
+            }
+            finally
+            {
+                System.Console.WriteLine($"{Environment.NewLine}Press any key to exit...");
+                System.Console.ReadKey();
+            }
         }
     }
 }
