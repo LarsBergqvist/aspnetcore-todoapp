@@ -1,5 +1,4 @@
-# aspnetcore-todoapp
-![Build](https://github.com/larsbergqvist/aspnetcore-todoapp/actions/workflows/dotnet.yml/badge.svg)
+# aspnetcore-todoapp ![Build](https://github.com/larsbergqvist/aspnetcore-todoapp/actions/workflows/dotnet.yml/badge.svg)
 
 # Create the database for todo lists
 Modify TodosConnection in Infrastructure\appsettings.json (or use user-secret)
