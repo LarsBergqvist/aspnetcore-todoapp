@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>aspnet-RazorPagesApp-14533F2D-5F92-4BD2-9F92-F1973114A0FB</UserSecretsId>
   </PropertyGroup>
 
