@@ -13,7 +13,7 @@ namespace Infrastructure.Extensions
         {
             services.AddDbContext<TodoDbContext>(options =>
             {
-                options.UseSqlServer(
+                options.UseSqlite(
                     configuration.GetConnectionString("TodosConnection"));
             });
             services.AddTransient<ITodoService, TodoService>();

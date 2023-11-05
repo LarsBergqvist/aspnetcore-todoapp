@@ -17,7 +17,7 @@ namespace Infrastructure.Data
             var builder = new DbContextOptionsBuilder<TodoDbContext>();
             var connectionString = configuration.GetConnectionString("TodosConnection");
 
-            builder.UseSqlServer(connectionString);
+            builder.UseSqlite(connectionString);
 
             return new TodoDbContext(builder.Options);
         }
